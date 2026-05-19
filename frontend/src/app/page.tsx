@@ -7,14 +7,16 @@ import { uploadVideo } from "@/services/api";
 export default function Home() {
 const [selectedFile, setSelectedFile] = useState<File | null>(null)
 const [liveIncidents, setLiveIncidents] = useState(incidents)
-const [result, setResult] = useState<{
 
+const [result, setResult] = useState<{
   processing_result: {
     total_frames: number
+    processed_video: string
     analysis: {
       alert: boolean
       message: string
       people_detected: number
+      interactions: string[]
     }
   }
 } | null>(null)
@@ -27,21 +29,25 @@ const handleUpload = async () => {
 
   const response = await uploadVideo(selectedFile)
 
+  const analysis = response?.processing_result?.analysis
+
+
   setResult(response)
   const newIncident = {
   id: liveIncidents.length + 1,
   camera: "AI CAMERA",
-  threat: response.processing_result.analysis.alert
+  threat: analysis?.alert
     ? "HIGH"
     : "LOW",
   time: new Date().toLocaleTimeString(),
-  message: response.processing_result.analysis.message,
+  message: analysis?.message,
 }
 
 setLiveIncidents([newIncident, ...liveIncidents])
 
   setLoading(false)
 }
+const analysis = result?.processing_result?.analysis
   return (
     <main className="min-h-screen bg-black text-white overflow-hidden relative">
       {/* Background Glow */}
@@ -128,7 +134,13 @@ setLiveIncidents([newIncident, ...liveIncidents])
     </div>
 
     <label className="group relative flex flex-col items-center justify-center h-64 rounded-3xl border border-dashed border-cyan-400/20 bg-gradient-to-br from-cyan-400/5 to-transparent cursor-pointer overflow-hidden transition duration-500 hover:border-cyan-400/60 hover:shadow-[0_0_40px_rgba(0,255,255,0.15)]">
+     <div className="absolute top-4 left-6 text-xs text-cyan-400/60 tracking-widest">
+  FEED_01
+</div>
 
+<div className="absolute top-4 right-6 text-xs text-green-400/70 tracking-[0.3em]">
+  AI_ACTIVE
+</div>
       {/* Hover Glow */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 bg-[radial-gradient(circle,rgba(0,255,255,0.12),transparent_70%)]" />
 
@@ -169,11 +181,11 @@ setLiveIncidents([newIncident, ...liveIncidents])
       />
 
     </label>
-    <div className="mt-8 flex flex-col items-center">
+    <div className="mt-10 grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
 
   <button
     onClick={handleUpload}
-    className="px-10 py-4 rounded-2xl bg-cyan-400 text-black font-black tracking-widest text-lg hover:scale-105 transition duration-300 shadow-[0_0_30px_rgba(0,255,255,0.35)]"
+    className="w-fit px-10 py-4 rounded-2xl bg-cyan-400 text-black font-black tracking-widest text-lg hover:scale-105 transition duration-300 shadow-[0_0_30px_rgba(0,255,255,0.35)]"
   >
     ANALYZE FOOTAGE
   </button>
@@ -183,45 +195,126 @@ setLiveIncidents([newIncident, ...liveIncidents])
       PROCESSING SURVEILLANCE DATA...
     </p>
   )}
+  
 
   {result && (
-    <div className="mt-8 w-full max-w-2xl border border-cyan-400/20 bg-black/40 rounded-3xl p-6 backdrop-blur-xl">
 
-      <h3 className="text-2xl font-bold text-green-400 tracking-wide">
-        ANALYSIS COMPLETE
+  <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mt-10">
+
+    {/* VIDEO PANEL */}
+
+    <div className="rounded-3xl border border-cyan-400/20 bg-black/40 p-4 backdrop-blur-xl shadow-[0_0_40px_rgba(0,255,255,0.08)]">
+
+      <h3 className="text-xl font-bold text-cyan-300 mb-4 tracking-widest">
+        PROCESSED SURVEILLANCE FEED
       </h3>
 
-      <div className="mt-5 space-y-3 text-lg">
+      <video
+  key={result.processing_result.processed_video}
+  controls
+  autoPlay
+  className="w-full rounded-2xl border border-cyan-400/20"
+>
+  <source
+    src={`http://127.0.0.1:8000/${result.processing_result.processed_video}`}
+    type="video/mp4"
+  />
+</video>
 
-        <p className="text-gray-300">
-          Frames Processed:
-          <span className="text-cyan-400 ml-2 font-bold">
-            {result.processing_result.total_frames}
-          </span>
-        </p>
+    </div>
 
-        <p
-          className={`font-bold ${
-            result.processing_result.analysis.alert
-              ? "text-red-400"
-              : "text-green-400"
+    {/* THREAT PANEL */}
+
+    <div className="rounded-3xl border border-red-500/20 bg-black/40 p-6 backdrop-blur-xl">
+
+      <div className="flex items-center justify-between mb-6">
+
+        <h2 className="text-3xl font-black tracking-widest text-red-400">
+          THREAT INTELLIGENCE
+        </h2>
+
+        <div
+          className={`px-4 py-2 rounded-full text-sm font-bold tracking-widest ${
+            analysis?.alert
+              ? "bg-red-500/20 text-red-400 border border-red-500/30 animate-pulse"
+              : "bg-green-500/20 text-green-400 border border-green-500/30"
           }`}
         >
-          {result.processing_result.analysis.message}
-        </p>
+          {analysis?.alert
+            ? "HIGH RISK"
+            : "NORMAL"}
+        </div>
 
-        <p className="text-gray-300">
-          People Detected:
-          <span className="text-cyan-400 ml-2 font-bold">
-            {result.processing_result.analysis.people_detected}
-          </span>
-        </p>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-6">
+
+        <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/5 p-5">
+
+          <p className="text-gray-400 text-sm tracking-widest mb-2">
+            PEOPLE DETECTED
+          </p>
+
+          <h3 className="text-5xl font-black text-cyan-400">
+            {analysis?.people_detected}
+          </h3>
+
+        </div>
+
+        <div className="rounded-2xl border border-purple-400/20 bg-purple-400/5 p-5">
+
+          <p className="text-gray-400 text-sm tracking-widest mb-2">
+            SYSTEM STATUS
+          </p>
+
+          <h3 className="text-2xl font-bold text-purple-300">
+            {analysis?.message}
+          </h3>
+
+        </div>
+
+      </div>
+
+      <div className="mt-8">
+
+        <h3 className="text-xl font-bold text-red-300 mb-4 tracking-widest">
+          LIVE INCIDENT FEED
+        </h3>
+
+        <div className="space-y-4">
+
+          {analysis && analysis.interactions.length > 0 ? (
+
+            analysis.interactions.map(
+              (interaction: string, index: number) => (
+
+                <div
+                  key={index}
+                  className="rounded-2xl border border-red-500/20 bg-red-500/10 p-4 text-red-300 hover:scale-[1.02] transition-all duration-300 shadow-[0_0_20px_rgba(255,0,0,0.12)]"
+                >
+                  🚨 {interaction}
+                </div>
+
+              )
+            )
+
+          ) : (
+
+            <div className="rounded-2xl border border-green-500/20 bg-green-500/10 p-4 text-green-300">
+               No suspicious interactions detected
+            </div>
+
+          )}
+
+        </div>
 
       </div>
 
     </div>
-  )}
 
+  </div>
+
+)}
 </div>
 
   </div>
@@ -233,14 +326,14 @@ setLiveIncidents([newIncident, ...liveIncidents])
 
     <div className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-xl">
       <p className="text-gray-500 text-sm">CAMERAS ACTIVE</p>
-      <h2 className="text-4xl font-bold text-cyan-400 mt-2">
+      <h2 className="text-3xl font-bold text-cyan-400 mt-2">
         {systemStatus.camerasActive}
       </h2>
     </div>
 
     <div className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-xl">
       <p className="text-gray-500 text-sm">ACTIVE ALERTS</p>
-      <h2 className="text-4xl font-bold text-red-400 mt-2">
+      <h2 className="text-3xl font-bold text-red-400 mt-2">
         {systemStatus.activeAlerts}
       </h2>
     </div>

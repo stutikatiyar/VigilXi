@@ -12,5 +12,5 @@ export async function uploadVideo(file: File) {
     }
   )
 
-  return response.json()
+  return await response.json()
 }

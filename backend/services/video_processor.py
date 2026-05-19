@@ -13,9 +13,18 @@ def process_video(video_path):
 
     frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    fps = int(cap.get(cv2.CAP_PROP_FPS))
+
+    fps = cap.get(cv2.CAP_PROP_FPS)
+
+    if fps == 0:
+        fps = 30
 
     output_path = "processed/output.mp4"
+
+    # Remove old processed file
+
+    if os.path.exists(output_path):
+        os.remove(output_path)
 
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
 
@@ -27,6 +36,13 @@ def process_video(video_path):
     )
 
     frame_count = 0
+
+    final_analysis = {
+        "alert": False,
+        "message": "Normal activity detected.",
+        "people_detected": 0,
+        "interactions": []
+    }
 
     while cap.isOpened():
 
@@ -41,34 +57,87 @@ def process_video(video_path):
 
         analysis = analyze_detections(detections)
 
+        final_analysis = analysis
+
         print(detections)
-        print(analysis)
+        print("FINAL ANALYSIS:", analysis)
+
+        # Draw Bounding Boxes
 
         for detection in detections:
 
             if detection["class_id"] == 0:
 
-                x1, y1, x2, y2 = detection["bbox"]
+                x1, y1, x2, y2 = map(
+                    int,
+                    detection["bbox"]
+                )
+
+                confidence = detection["confidence"]
 
                 track_id = detection["track_id"]
 
+                # BOX
+
                 cv2.rectangle(
                     frame,
-                    (int(x1), int(y1)),
-                    (int(x2), int(y2)),
+                    (x1, y1),
+                    (x2, y2),
                     (0, 255, 0),
                     2
                 )
 
+                # LABEL
+
                 cv2.putText(
                     frame,
-                    f"ID: {track_id}",
-                    (int(x1), int(y1) - 10),
+                    f"ID {track_id} | {confidence:.2f}",
+                    (x1, y1 - 10),
                     cv2.FONT_HERSHEY_SIMPLEX,
                     0.6,
                     (0, 255, 0),
                     2
                 )
+
+        # PEOPLE COUNT
+
+        cv2.putText(
+            frame,
+            f"People Detected: {analysis['people_detected']}",
+            (30, 50),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1,
+            (0, 255, 255),
+            2
+        )
+
+        # THREAT STATUS
+
+        if analysis["alert"]:
+
+            cv2.putText(
+                frame,
+                "THREAT DETECTED",
+                (30, 100),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1,
+                (0, 0, 255),
+                3
+            )
+
+        else:
+
+            cv2.putText(
+                frame,
+                "NORMAL ACTIVITY",
+                (30, 100),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1,
+                (0, 255, 0),
+                3
+            )
+
+        # WRITE FRAME
 
         out.write(frame)
 
@@ -79,6 +148,6 @@ def process_video(video_path):
     return {
         "status": "processed",
         "total_frames": frame_count,
-        "analysis": analysis,
+        "analysis": final_analysis,
         "processed_video": output_path
     }
