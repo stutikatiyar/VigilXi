@@ -71,6 +71,8 @@ Unlike traditional static CCTV systems, VigilX attempts to interpret surveillanc
 * Interactive upload experience
 
 ---
+<img width="1876" height="977" alt="image" src="https://github.com/user-attachments/assets/0c2567f4-c692-4692-9e1f-4ef3c571c2c9" />
+
 
 # 🧠 How VigilX Works
 
