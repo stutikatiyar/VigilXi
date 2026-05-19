@@ -30,6 +30,8 @@ Unlike traditional static CCTV systems, VigilX attempts to interpret surveillanc
 * Perform frame-by-frame analysis using OpenCV and YOLOv8
 
 ---
+<img width="1877" height="647" alt="image" src="https://github.com/user-attachments/assets/bb8f26be-5fab-4591-9a6e-14c5068e2f72" />
+
 
 ## 🤖 YOLOv8 Object Detection
 
