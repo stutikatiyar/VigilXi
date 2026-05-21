@@ -1,6 +1,6 @@
 from ultralytics import YOLO
 
-model = YOLO("yolov8x.pt")
+model = YOLO("yolov8s.pt")
 
 
 def detect_objects(frame):
@@ -10,7 +10,8 @@ def detect_objects(frame):
         persist=True,
         imgsz=960,
         classes=[0],
-        conf=0.35
+        conf=0.15,
+        iou=0.4
     )
 
     detections = []

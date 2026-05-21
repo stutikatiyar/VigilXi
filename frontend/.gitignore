@@ -42,3 +42,28 @@ next-env.d.ts
 
 # YOLO Models
 *.pt
+
+# Python
+venv/
+__pycache__/
+
+# YOLO Models
+*.pt
+
+# Processed Outputs
+processed/
+snapshots/
+uploads/
+
+# Next.js
+.next/
+node_modules/
+
+# Environment
+.env
+
+backend/processed/
+backend/snapshots/
+backend/uploads/
+
+*.pt

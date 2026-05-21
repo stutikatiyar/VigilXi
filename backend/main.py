@@ -6,7 +6,17 @@ import shutil
 import os
 
 app = FastAPI()
-app.mount("/processed",StaticFiles(directory="processed"),name="processed")
+app.mount(
+    "/processed",
+    StaticFiles(directory="processed"),
+    name="processed"
+)
+
+app.mount(
+    "/snapshots",
+    StaticFiles(directory="snapshots"),
+    name="snapshots"
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

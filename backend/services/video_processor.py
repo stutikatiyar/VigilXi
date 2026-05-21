@@ -9,7 +9,10 @@ def process_video(video_path):
 
     cap = cv2.VideoCapture(video_path)
 
+    # CREATE FOLDERS
+
     os.makedirs("processed", exist_ok=True)
+    os.makedirs("snapshots", exist_ok=True)
 
     frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -21,7 +24,7 @@ def process_video(video_path):
 
     output_path = "processed/output.mp4"
 
-    # Remove old processed file
+    # REMOVE OLD OUTPUT VIDEO
 
     if os.path.exists(output_path):
         os.remove(output_path)
@@ -36,6 +39,8 @@ def process_video(video_path):
     )
 
     frame_count = 0
+
+    final_snapshot = None
 
     final_analysis = {
         "alert": False,
@@ -62,7 +67,17 @@ def process_video(video_path):
         print(detections)
         print("FINAL ANALYSIS:", analysis)
 
-        # Draw Bounding Boxes
+        # SAVE INCIDENT SNAPSHOT
+
+        if analysis["alert"]:
+
+            final_snapshot = (
+                f"snapshots/incident_frame_{frame_count}.jpg"
+            )
+
+            cv2.imwrite(final_snapshot, frame)
+
+        # DRAW DETECTIONS
 
         for detection in detections:
 
@@ -77,7 +92,7 @@ def process_video(video_path):
 
                 track_id = detection["track_id"]
 
-                # BOX
+                # BOUNDING BOX
 
                 cv2.rectangle(
                     frame,
@@ -149,5 +164,6 @@ def process_video(video_path):
         "status": "processed",
         "total_frames": frame_count,
         "analysis": final_analysis,
-        "processed_video": output_path
+        "processed_video": output_path,
+        "snapshot": final_snapshot
     }
