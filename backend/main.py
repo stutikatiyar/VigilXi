@@ -45,6 +45,10 @@ async def upload_video(file: UploadFile = File(...)):
     result = process_video(file_path)
 
     return {
-        "filename": file.filename,
-        "processing_result": result
-    }
+    "filename": file.filename,
+    "status": result["status"],
+    "total_frames": result["total_frames"],
+    "analysis": result["analysis"],
+    "processed_video": result["processed_video"],
+    "snapshot": result.get("snapshot")
+}

@@ -13,17 +13,15 @@ export default function AnalyzePage() {
 
   const [result, setResult] = useState<{
   filename: string
-  processing_result: {
-    status: string
-    total_frames: number
-    processed_video: string
-    snapshot?: string
-    analysis: {
-      alert: boolean
-      message: string
-      people_detected: number
-      interactions: string[]
-    }
+  status: string
+  total_frames: number
+  processed_video: string
+  snapshot?: string
+  analysis: {
+    alert: boolean
+    message: string
+    people_detected: number
+    interactions: string[]
   }
 } | null>(null)
 
@@ -54,7 +52,7 @@ export default function AnalyzePage() {
 
   }
 
-  const analysis = result?.processing_result?.analysis
+  const analysis = result?.analysis
 
   return (
 
@@ -155,13 +153,13 @@ export default function AnalyzePage() {
             </h3>
 
             <video muted
-              key={result.processing_result.processed_video}
+              key={result.processed_video}
               controls
               autoPlay
               className="w-full rounded-2xl border border-cyan-400/20"
             >
               <source
-                src={`http://127.0.0.1:8000/${result.processing_result.processed_video}`}
+                src={`http://127.0.0.1:8000/${result.processed_video}`}
                 type="video/mp4"
               />
             </video>
