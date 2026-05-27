@@ -79,23 +79,6 @@ Example incidents:
 
 ---
 
-## 🚦 Traffic Intelligence Module
-
-The platform also supports traffic-scene analysis.
-
-Capabilities include:
-
-* Vehicle counting
-* Congestion estimation
-* Multi-vehicle monitoring
-* Traffic density classification
-* Urban activity monitoring
-
-Congestion levels:
-
-* Low
-* Medium
-* Heavy
 
 ---
 
