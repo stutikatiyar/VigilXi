@@ -1,12 +1,12 @@
-# 🛡️ VigilX — AI Surveillance Intelligence System
+# 🛡️ VigilX — AI Video Intelligence Platform
 
-> Real-time AI surveillance and threat monitoring platform powered by Computer Vision, YOLOv8, FastAPI, OpenCV, and Next.js.
+> Real-time AI-powered surveillance and monitoring platform built using Computer Vision, YOLOv8, FastAPI, OpenCV, and Next.js.
 
 ---
 
 # 📌 Overview
 
-VigilX is a full-stack AI-powered surveillance intelligence system designed to simulate a futuristic CCTV monitoring platform capable of analyzing surveillance footage, detecting humans and objects, generating suspicious activity alerts, and visualizing surveillance intelligence through an interactive cyber-security inspired dashboard.
+VigilX is a full-stack AI video intelligence platform designed to simulate a futuristic CCTV monitoring system capable of analyzing surveillance footage, detecting humans and vehicles, estimating suspicious physical interactions, and visualizing intelligent incident insights through an interactive cyber-security inspired dashboard.
 
 The project combines:
 
@@ -17,7 +17,7 @@ The project combines:
 * 🌐 Full-Stack Web Development
 * 📊 Intelligent Incident Visualization
 
-Unlike traditional static CCTV systems, VigilX attempts to interpret surveillance footage and generate meaningful AI-driven alerts rather than simply displaying raw video streams.
+Unlike traditional static CCTV systems, VigilX attempts to interpret scene behavior and generate meaningful AI-assisted operational insights rather than simply displaying raw video streams.
 
 ---
 
@@ -28,18 +28,43 @@ Unlike traditional static CCTV systems, VigilX attempts to interpret surveillanc
 * Upload surveillance footage directly from the frontend dashboard
 * Send video to AI backend for processing
 * Perform frame-by-frame analysis using OpenCV and YOLOv8
+* Real-time surveillance intelligence visualization
 
 ---
+
 <img width="1877" height="647" alt="image" src="https://github.com/user-attachments/assets/bb8f26be-5fab-4591-9a6e-14c5068e2f72" />
 
+---
 
-## 🤖 YOLOv8 Object Detection
+## 🤖 YOLOv8 Multi-Object Detection
 
 * Human detection
+* Vehicle detection
 * Motorcycle detection
 * Multi-object recognition
+* Traffic-aware detection
 * Confidence-based filtering
 * Real-time frame inference
+
+---
+
+## 🤼 Physical Interaction Detection
+
+VigilX includes heuristic-based interaction analysis capable of estimating suspicious physical interactions between individuals.
+
+Current logic includes:
+
+* Human proximity analysis
+* Bounding-box overlap estimation
+* Aggressive movement detection
+* Motion-based interaction reasoning
+* AI-generated suspicious activity alerts
+
+Example incidents:
+
+* Possible physical interaction detected
+* Aggressive movement detected
+* Unusual crowd behavior identified
 
 ---
 
@@ -47,9 +72,30 @@ Unlike traditional static CCTV systems, VigilX attempts to interpret surveillanc
 
 * Suspicious activity analysis
 * Person-count reasoning
+* Vehicle-count analysis
 * AI-generated surveillance alerts
 * Intelligent event interpretation
 * Dynamic incident generation
+
+---
+
+## 🚦 Traffic Intelligence Module
+
+The platform also supports traffic-scene analysis.
+
+Capabilities include:
+
+* Vehicle counting
+* Congestion estimation
+* Multi-vehicle monitoring
+* Traffic density classification
+* Urban activity monitoring
+
+Congestion levels:
+
+* Low
+* Medium
+* Heavy
 
 ---
 
@@ -59,6 +105,28 @@ Unlike traditional static CCTV systems, VigilX attempts to interpret surveillanc
 * AI-generated surveillance events
 * Threat categorization
 * Live dashboard updates
+* Suspicious interaction logging
+* Physical activity monitoring
+
+Example:
+
+```text id="8eh0mb"
+14:22 → Aggressive movement detected
+14:23 → Suspicious interaction identified
+14:25 → Traffic congestion increasing
+```
+
+---
+
+## 📸 Incident Snapshot System
+
+When suspicious activity is detected:
+
+* Snapshot frames are automatically saved
+* Incident evidence is generated
+* Event visualization becomes easier
+
+This improves operational realism and monitoring workflows.
 
 ---
 
@@ -71,12 +139,14 @@ Unlike traditional static CCTV systems, VigilX attempts to interpret surveillanc
 * Interactive upload experience
 
 ---
+
 <img width="1876" height="977" alt="image" src="https://github.com/user-attachments/assets/0c2567f4-c692-4692-9e1f-4ef3c571c2c9" />
 
+---
 
 # 🧠 How VigilX Works
 
-```text
+```text id="vyeqjt"
 CCTV Video Upload
         ↓
 FastAPI Backend
@@ -85,14 +155,14 @@ OpenCV Frame Extraction
         ↓
 YOLOv8 Object Detection
         ↓
-Surveillance Analysis Engine
+Movement & Interaction Analysis
         ↓
-AI Alert Generation
+AI Incident Intelligence
         ↓
 Frontend Visualization
 ```
 
-The system processes uploaded surveillance footage frame-by-frame, performs AI-based object detection, analyzes surveillance activity, and visualizes the generated intelligence directly on the dashboard.
+The system processes uploaded surveillance footage frame-by-frame, performs AI-based object detection, analyzes surveillance activity, and visualizes generated intelligence directly on the dashboard.
 
 ---
 
@@ -121,17 +191,17 @@ The system processes uploaded surveillance footage frame-by-frame, performs AI-b
 
 # 🤖 AI & Computer Vision
 
-| Technology  | Purpose             |
-| ----------- | ------------------- |
-| YOLOv8      | Object detection    |
-| OpenCV      | Video processing    |
-| Ultralytics | YOLO implementation |
+| Technology  | Purpose                |
+| ----------- | ---------------------- |
+| YOLOv8      | Multi-object detection |
+| OpenCV      | Video processing       |
+| Ultralytics | YOLO implementation    |
 
 ---
 
 # 📂 Project Structure
 
-```bash
+```bash id="f9jz1w"
 VigilX/
 │
 ├── backend/
@@ -141,8 +211,10 @@ VigilX/
 │   │   └── video_processor.py
 │   │
 │   ├── uploads/
-│   ├── venv/
-│   └── main.py
+│   ├── processed/
+│   ├── snapshots/
+│   ├── main.py
+│   └── requirements.txt
 │
 ├── frontend/
 │   ├── src/
@@ -163,11 +235,15 @@ VigilX/
 ✅ CCTV footage upload
 ✅ FastAPI backend integration
 ✅ OpenCV frame extraction
-✅ YOLOv8 object detection
+✅ YOLOv8 multi-object detection
 ✅ Human detection
-✅ Confidence-based filtering
+✅ Vehicle detection
+✅ Suspicious interaction detection
+✅ Physical proximity analysis
+✅ Congestion estimation
 ✅ AI-generated surveillance alerts
 ✅ Dynamic incident generation
+✅ Incident snapshot generation
 ✅ Frontend-backend communication
 ✅ Futuristic surveillance dashboard
 ✅ Real-time surveillance visualization
@@ -176,34 +252,42 @@ VigilX/
 
 # 🧪 AI Detection Logic
 
-Currently, VigilX uses:
+Current VigilX intelligence is based on:
 
-* YOLOv8 object detection
-* Frame-level surveillance analysis
-* Confidence-based detection filtering
-* Rule-based suspicious activity reasoning
+* YOLOv8 multi-object detection
+* Human proximity analysis
+* Bounding-box overlap heuristics
+* Motion-based interaction estimation
+* Confidence-based filtering
+* Rule-based surveillance reasoning
 
 Example:
 
-```python
-if detection["class_id"] == 0 and detection["confidence"] > 0.5:
+```python id="5u7xqz"
+if (
+    iou > 0.05
+    or distance_between_people < 70
+):
 ```
 
-The system identifies human detections and generates surveillance alerts based on analyzed scene conditions.
+The system estimates suspicious interactions using movement behavior and physical proximity.
 
 ---
 
 # ⚠️ Current Limitations
 
-The current implementation still faces challenges common in real-world surveillance systems:
+The current implementation still faces several real-world surveillance challenges:
 
 * Duplicate detections in crowded scenes
+* False positives during close interactions
+* Heuristic-based interaction estimation
 * Motion blur during fights or rapid movement
-* Unstable participant counting
+* Tracker instability in crowded scenes
 * Occlusion issues
 * Lack of persistent identity tracking
+* Lack of semantic behavior understanding
 
-These limitations were identified during CCTV fight-scene testing.
+These limitations are common in practical computer vision systems.
 
 ---
 
@@ -220,7 +304,9 @@ These limitations were identified during CCTV fight-scene testing.
 
 ## 🧠 Advanced Behavioral Analysis
 
-* Fight detection
+* Pose-estimation based fight detection
+* Crowd interaction analysis
+* Advanced behavioral reasoning
 * Loitering detection
 * Restricted-zone monitoring
 * Crowd anomaly detection
@@ -243,9 +329,7 @@ These limitations were identified during CCTV fight-scene testing.
 
 ## 🖥️ Dashboard UI
 
-> Add dashboard screenshots here.
-
-```bash
+```bash id="b7x2qk"
 screenshots/dashboard.png
 ```
 
@@ -253,10 +337,16 @@ screenshots/dashboard.png
 
 ## 🚨 AI Analysis Results
 
-> Add AI alert screenshots here.
-
-```bash
+```bash id="5kzq4m"
 screenshots/analysis.png
+```
+
+---
+
+## 📸 Incident Snapshots
+
+```bash id="s7yqk2"
+screenshots/incidents.png
 ```
 
 ---
@@ -265,15 +355,15 @@ screenshots/analysis.png
 
 # 1️⃣ Clone Repository
 
-```bash
-git clone https://github.com/your-username/VigilX.git
+```bash id="z0f3ut"
+git clone https://github.com/stutikatiyar/VigilXi.git
 ```
 
 ---
 
 # 2️⃣ Backend Setup
 
-```bash
+```bash id="rr8qz0"
 cd backend
 
 python -m venv venv
@@ -287,7 +377,7 @@ uvicorn main:app --reload
 
 Backend runs on:
 
-```bash
+```bash id="h0yn3f"
 http://127.0.0.1:8000
 ```
 
@@ -295,7 +385,7 @@ http://127.0.0.1:8000
 
 # 3️⃣ Frontend Setup
 
-```bash
+```bash id="x7g2wu"
 cd frontend
 
 npm install
@@ -305,7 +395,7 @@ npm run dev
 
 Frontend runs on:
 
-```bash
+```bash id="mx9s2l"
 http://localhost:3000
 ```
 
@@ -315,7 +405,7 @@ http://localhost:3000
 
 FastAPI Swagger documentation:
 
-```bash
+```bash id="e3xg1a"
 http://127.0.0.1:8000/docs
 ```
 
@@ -331,6 +421,7 @@ The focus of the project is:
 * modular AI pipelines
 * frontend-backend integration
 * surveillance reasoning
+* operational visualization
 * scalable architecture
 * production-style engineering workflow
 
@@ -363,19 +454,6 @@ Built with curiosity, obsession for AI systems, and an interest in futuristic su
 
 # ⭐ Final Note
 
-VigilX is still evolving.
+VigilX is continuously evolving.
 
-The current version focuses on:
-
-* AI surveillance foundations
-* object detection pipelines
-* intelligent alert generation
-* frontend-backend integration
-
-Future versions aim to push toward:
-
-* advanced behavioral analysis
-* movement tracking
-* real-time threat intelligence
-* production-grade surveillance systems.
 
