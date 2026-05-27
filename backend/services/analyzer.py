@@ -2,8 +2,8 @@ VEHICLE_CLASSES = [2, 3, 5, 7]
 
 import math
 
-previous_positions = {}
-previous_people_count = 0
+
+
 
 
 def calculate_iou(box1, box2):
@@ -28,11 +28,12 @@ def calculate_iou(box1, box2):
 
 def analyze_detections(detections):
 
-    global previous_people_count
+    
+    
 
     vehicle_count = 0
 
-    unique_people = set()
+    
 
     people_positions = []
 
@@ -44,7 +45,7 @@ def analyze_detections(detections):
 
         if (
             detection["class_id"] in VEHICLE_CLASSES
-            and detection["confidence"] > 0.4
+            and detection["confidence"] > 0.25
         ):
 
             vehicle_count += 1
@@ -53,47 +54,26 @@ def analyze_detections(detections):
 
         if (
             detection["class_id"] == 0
-            and detection["confidence"] > 0.4
+            and detection["confidence"] > 0.25
         ):
 
-            track_id = detection["track_id"]
+            
 
-            unique_people.add(track_id)
+            
 
             x1, y1, x2, y2 = detection["bbox"]
 
-            center_x = (x1 + x2) / 2
-            center_y = (y1 + y2) / 2
+            
 
-            # Movement Analysis
+            
 
-            if track_id in previous_positions:
+            
 
-                prev_x, prev_y = previous_positions[track_id]
-
-                movement_distance = math.sqrt(
-                    (center_x - prev_x) ** 2 +
-                    (center_y - prev_y) ** 2
-                )
-
-                current_speed = movement_distance
-
-                if current_speed > 35:
-
-                    suspicious_interactions.append(
-                        f"Aggressive movement detected from Track ID {track_id}"
-                    )
-
-            previous_positions[track_id] = (
-                center_x,
-                center_y
-            )
-
-            # Store Bounding Boxes
+            
 
             people_positions.append(
                 (
-                    track_id,
+                    
                     x1,
                     y1,
                     x2,
@@ -101,16 +81,24 @@ def analyze_detections(detections):
                 )
             )
 
-    # Stable People Counting
+    global recent_counts
 
-    current_count = len(unique_people)
+    try:
+        recent_counts
+    except NameError:
+        recent_counts = []
 
-    people_count = max(
-        previous_people_count,
-        current_count
-    )
+    current_count = len(people_positions)
 
-    previous_people_count = people_count
+    recent_counts.append(current_count)
+
+    if len(recent_counts) > 10:
+        recent_counts.pop(0)
+
+    people_count = max(recent_counts)
+
+    
+    
 
     # Congestion Analysis
 
@@ -132,9 +120,11 @@ def analyze_detections(detections):
 
         for j in range(i + 1, len(people_positions)):
 
-            id1, x1_1, y1_1, x2_1, y2_1 = people_positions[i]
+            
+            x1_1, y1_1, x2_1, y2_1 = people_positions[i]
 
-            id2, x1_2, y1_2, x2_2, y2_2 = people_positions[j]
+            
+            x1_2, y1_2, x2_2, y2_2 = people_positions[j]
 
             iou = calculate_iou(
                 (x1_1, y1_1, x2_1, y2_1),
@@ -154,11 +144,11 @@ def analyze_detections(detections):
 
             if (
                 iou > 0.05
-                or distance_between_people < 120
+                or distance_between_people < 90
             ):
 
                 suspicious_interactions.append(
-                    f"Possible physical interaction detected between Track ID {id1} and Track ID {id2}"
+                    "Possible physical interaction detected"
                 )
 
     # Final Output

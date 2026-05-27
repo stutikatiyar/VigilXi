@@ -14,8 +14,8 @@ def process_video(video_path):
     os.makedirs("processed", exist_ok=True)
     os.makedirs("snapshots", exist_ok=True)
 
-    frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    frame_width = 640
+    frame_height = 360
 
     fps = cap.get(cv2.CAP_PROP_FPS)
 
@@ -58,6 +58,15 @@ def process_video(video_path):
 
         frame_count += 1
 
+        # PROCESS EVERY 5TH FRAME ONLY
+
+        if frame_count % 5 != 0:
+            continue
+
+        # RESIZE FRAME FOR FASTER PROCESSING
+
+        frame = cv2.resize(frame, (640, 360))
+
         detections = detect_objects(frame)
 
         analysis = analyze_detections(detections)
@@ -90,8 +99,6 @@ def process_video(video_path):
 
                 confidence = detection["confidence"]
 
-                track_id = detection["track_id"]
-
                 # BOUNDING BOX
 
                 cv2.rectangle(
@@ -106,7 +113,7 @@ def process_video(video_path):
 
                 cv2.putText(
                     frame,
-                    f"ID {track_id} | {confidence:.2f}",
+                    f"Person | {confidence:.2f}",
                     (x1, y1 - 10),
                     cv2.FONT_HERSHEY_SIMPLEX,
                     0.6,
