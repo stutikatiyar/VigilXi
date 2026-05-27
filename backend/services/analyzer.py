@@ -1,3 +1,5 @@
+VEHICLE_CLASSES = [2, 3, 5, 7]
+
 import math
 
 previous_positions = {}
@@ -28,6 +30,8 @@ def analyze_detections(detections):
 
     global previous_people_count
 
+    vehicle_count = 0
+
     unique_people = set()
 
     people_positions = []
@@ -35,6 +39,17 @@ def analyze_detections(detections):
     suspicious_interactions = []
 
     for detection in detections:
+
+        # Vehicle Counting
+
+        if (
+            detection["class_id"] in VEHICLE_CLASSES
+            and detection["confidence"] > 0.4
+        ):
+
+            vehicle_count += 1
+
+        # Human Analysis
 
         if (
             detection["class_id"] == 0
@@ -61,7 +76,9 @@ def analyze_detections(detections):
                     (center_y - prev_y) ** 2
                 )
 
-                if movement_distance > 50:
+                current_speed = movement_distance
+
+                if current_speed > 35:
 
                     suspicious_interactions.append(
                         f"Aggressive movement detected from Track ID {track_id}"
@@ -72,7 +89,7 @@ def analyze_detections(detections):
                 center_y
             )
 
-            # Store Full Bounding Boxes
+            # Store Bounding Boxes
 
             people_positions.append(
                 (
@@ -95,6 +112,20 @@ def analyze_detections(detections):
 
     previous_people_count = people_count
 
+    # Congestion Analysis
+
+    if vehicle_count < 5:
+
+        congestion_level = "Low"
+
+    elif vehicle_count < 15:
+
+        congestion_level = "Medium"
+
+    else:
+
+        congestion_level = "Heavy"
+
     # Interaction Analysis
 
     for i in range(len(people_positions)):
@@ -110,10 +141,24 @@ def analyze_detections(detections):
                 (x1_2, y1_2, x2_2, y2_2)
             )
 
-            if iou > 0.1:
+            center_x1 = (x1_1 + x2_1) / 2
+            center_y1 = (y1_1 + y2_1) / 2
+
+            center_x2 = (x1_2 + x2_2) / 2
+            center_y2 = (y1_2 + y2_2) / 2
+
+            distance_between_people = math.sqrt(
+                (center_x2 - center_x1) ** 2 +
+                (center_y2 - center_y1) ** 2
+            )
+
+            if (
+                iou > 0.05
+                or distance_between_people < 120
+            ):
 
                 suspicious_interactions.append(
-                    f"Possible physical altercation detected between Track ID {id1} and Track ID {id2}"
+                    f"Possible physical interaction detected between Track ID {id1} and Track ID {id2}"
                 )
 
     # Final Output
@@ -124,6 +169,8 @@ def analyze_detections(detections):
             "alert": True,
             "message": "Suspicious interaction detected.",
             "people_detected": people_count,
+            "vehicle_count": vehicle_count,
+            "congestion_level": congestion_level,
             "interactions": suspicious_interactions
         }
 
@@ -131,5 +178,7 @@ def analyze_detections(detections):
         "alert": False,
         "message": "Normal activity detected.",
         "people_detected": people_count,
+        "vehicle_count": vehicle_count,
+        "congestion_level": congestion_level,
         "interactions": []
     }
