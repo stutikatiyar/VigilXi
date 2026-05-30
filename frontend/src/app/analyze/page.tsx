@@ -10,6 +10,8 @@ export default function AnalyzePage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
   const [loading, setLoading] = useState(false)
+  const [loadingMessage, setLoadingMessage] = useState("")
+  const [cancelled, setCancelled] = useState(false)
 
   const [result, setResult] = useState<{
   filename: string
@@ -25,20 +27,44 @@ export default function AnalyzePage() {
   }
 } | null>(null)
 
+const cancelAnalysis = () => {
+
+  setCancelled(true)
+
+  setLoading(false)
+
+  setLoadingMessage("")
+
+}
+
   async function handleUpload() {
+    setCancelled(false)
 
     if (!selectedFile) return
 
     try {
 
       setLoading(true)
+      setLoadingMessage("Analyzing footage...")
+
+      setTimeout(() => {
+        setLoadingMessage("Tracking subjects...")
+      }, 2000)
+
+      setTimeout(() => {
+        setLoadingMessage("Generating incident report...")
+      }, 4000)
+
 
       const response = await uploadVideo(selectedFile)
       console.log("BACKEND RESPONSE:", response)
 
       console.log(response)
 
-      setResult(response)
+      
+      if (!cancelled) {
+  setResult(response)
+}
 
     } catch (error) {
 
@@ -134,6 +160,34 @@ export default function AnalyzePage() {
         </button>
 
       </div>
+      {/* {loading state} */}
+      {/* Loading State */}
+
+{loading && (
+  <div className="mt-6 p-6 rounded-2xl border border-cyan-500/20 bg-black/40">
+
+    <div className="flex items-center gap-3">
+
+      <div className="w-3 h-3 rounded-full bg-cyan-400 animate-pulse"></div>
+
+      <p className="text-cyan-300 text-lg font-medium">
+        {loadingMessage}
+      </p>
+
+    </div>
+
+    <button
+      onClick={cancelAnalysis}
+      className="mt-4 px-4 py-2 rounded-xl bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500/30 transition"
+    >
+      Cancel Analysis
+    </button>
+
+  </div>
+)}
+
+{/* Result Section */}
+
 
       {/* RESULTS */}
 
