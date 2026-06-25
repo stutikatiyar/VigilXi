@@ -1,19 +1,9 @@
-# Python
 venv/
 __pycache__/
 *.pyc
-
-# Uploads
-uploads/
-
-# Node
+backend/uploads/
+backend/processed/
+backend/snapshots/
+backend/*.pt
 node_modules/
-
-# Next.js
 .next/
-
-# Environment
-.env
-
-# OS
-.DS_Store

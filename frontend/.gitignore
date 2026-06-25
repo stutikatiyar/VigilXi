@@ -67,3 +67,13 @@ backend/snapshots/
 backend/uploads/
 
 *.pt
+
+cat > /workspaces/VigilXi/backend/.gitignore << 'EOF'
+venv/
+__pycache__/
+*.pyc
+uploads/
+processed/
+snapshots/
+*.pt
+EOF
