@@ -37,46 +37,36 @@ const cancelAnalysis = () => {
 
 }
 
-  async function handleUpload() {
-    setCancelled(false)
+ async function handleUpload() {
 
-    if (!selectedFile) return
+  console.log("🔥 handleUpload() called");
 
-    try {
+  setCancelled(false);
 
-      setLoading(true)
-      setLoadingMessage("Analyzing footage...")
-
-      setTimeout(() => {
-        setLoadingMessage("Tracking subjects...")
-      }, 2000)
-
-      setTimeout(() => {
-        setLoadingMessage("Generating incident report...")
-      }, 4000)
-
-
-      const response = await uploadVideo(selectedFile)
-      console.log("BACKEND RESPONSE:", response)
-
-      console.log(response)
-
-      
-      if (!cancelled) {
-  setResult(response)
-}
-
-    } catch (error) {
-
-      console.error(error)
-
-    } finally {
-
-      setLoading(false)
-
-    }
-
+  if (!selectedFile) {
+    console.log("❌ No file selected");
+    return;
   }
+
+  console.log("✅ Selected file:", selectedFile.name);
+
+  try {
+    setLoading(true);
+
+    console.log("🚀 Calling uploadVideo()");
+
+    const response = await uploadVideo(selectedFile);
+
+    console.log("✅ Backend response:", response);
+
+    setResult(response);
+
+  } catch (error) {
+    console.error("❌ Upload failed:", error);
+  } finally {
+    setLoading(false);
+  }
+}
 
   const analysis = result?.analysis
 
@@ -89,7 +79,7 @@ const cancelAnalysis = () => {
       <div className="mb-12">
 
         <h1 className="text-6xl font-black tracking-[0.3em] text-cyan-400">
-          VIGILX
+          VIGILXI
         </h1>
 
         <p className="mt-4 text-gray-400 tracking-widest">
@@ -112,20 +102,20 @@ const cancelAnalysis = () => {
             AI_ACTIVE
           </div>
 
-          <input
-            type="file"
-            accept="video/*"
-            className="hidden"
-            onChange={(e) => {
+        <input
+  type="file"
+  accept="video/*"
+  onChange={(e) => {
+    alert("ONCHANGE FIRED");
 
-              if (e.target.files?.[0]) {
+    const file = e.target.files?.[0];
 
-                setSelectedFile(e.target.files[0])
-
-              }
-
-            }}
-          />
+    if (file) {
+      alert(file.name);
+      setSelectedFile(file);
+    }
+  }}
+/>
 
           <div className="flex flex-col items-center">
 
@@ -149,15 +139,13 @@ const cancelAnalysis = () => {
 
         </label>
 
-        <button
-          onClick={handleUpload}
-          disabled={loading}
-          className="mt-8 w-full px-10 py-4 rounded-2xl bg-cyan-400 text-black font-black tracking-widest text-lg hover:scale-[1.02] transition duration-300 shadow-[0_0_30px_rgba(0,255,255,0.35)] disabled:opacity-50"
-        >
-          {loading
-            ? "PROCESSING..."
-            : "START AI ANALYSIS"}
-        </button>
+     <button
+  onClick={handleUpload}
+  disabled={loading}
+  className="mt-8 w-full px-10 py-4 rounded-2xl bg-cyan-400 text-black font-black tracking-widest text-lg hover:scale-[1.02] transition duration-300 shadow-[0_0_30px_rgba(0,255,255,0.35)] disabled:opacity-50"
+>
+  {loading ? "PROCESSING..." : "START AI ANALYSIS"}
+</button>
 
       </div>
       {/* {loading state} */}

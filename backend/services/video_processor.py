@@ -9,8 +9,12 @@ def process_video(video_path):
 
     cap = cv2.VideoCapture(video_path)
 
-    # CREATE FOLDERS
+    if not cap.isOpened():
+        raise Exception(f"Could not open video: {video_path}")
 
+    print("✅ Video opened successfully")
+
+    # CREATE FOLDERS
     os.makedirs("processed", exist_ok=True)
     os.makedirs("snapshots", exist_ok=True)
 
@@ -25,7 +29,6 @@ def process_video(video_path):
     output_path = "processed/output.mp4"
 
     # REMOVE OLD OUTPUT VIDEO
-
     if os.path.exists(output_path):
         os.remove(output_path)
 
@@ -41,6 +44,41 @@ def process_video(video_path):
     frame_count = 0
 
     final_snapshot = None
+
+    final_analysis = {
+        "alert": False,
+        "message": "Normal activity detected.",
+        "people_detected": 0,
+        "interactions": []
+    }
+
+    while cap.isOpened():
+
+        ret, frame = cap.read()
+
+        print("Reading frame:", ret)
+
+        if not ret:
+            break
+
+        frame_count += 1
+
+        print("Frame number:", frame_count)
+
+        # PROCESS EVERY 5TH FRAME ONLY
+        if frame_count % 5 != 0:
+            continue
+
+        # RESIZE FRAME FOR FASTER PROCESSING
+        frame = cv2.resize(frame, (640, 360))
+
+        detections = detect_objects(frame)
+        print("Detections:", detections)
+
+        analysis = analyze_detections(detections)
+        print("Analysis:", analysis)
+
+        final_analysis = analysis
 
     final_analysis = {
         "alert": False,

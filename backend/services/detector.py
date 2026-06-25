@@ -9,8 +9,8 @@ def detect_objects(frame):
         frame,
         imgsz=960,
         classes=[0],
-        conf=0.20,
-        iou=0.30
+        conf=0.40,
+        iou=0.45
     )
 
     detections = []
