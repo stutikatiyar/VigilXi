@@ -1,16 +1,16 @@
 from ultralytics import YOLO
 
-model = YOLO("yolov8n-pose.pt")
+model = YOLO("yolov8m-pose.pt")
 
 
 def detect_objects(frame):
 
     results = model.predict(
-        frame,
-        imgsz=960,
-        classes=[0],
-        conf=0.40,
-        iou=0.45
+         frame,
+    imgsz=960,
+    classes=[0],
+    conf=0.40,
+    iou=0.45
     )
 
     detections = []
@@ -30,8 +30,10 @@ def detect_objects(frame):
 
             class_id = int(box.cls[0])
 
+            track_id = int(box.id[0]) if box.id is not None else -1
+
             detections.append({
-                "track_id": -1,
+                "track_id": track_id,
                 "class_id": class_id,
                 "confidence": confidence,
                 "bbox": [x1, y1, x2, y2]

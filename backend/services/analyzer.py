@@ -81,21 +81,7 @@ def analyze_detections(detections):
                 )
             )
 
-    global recent_counts
-
-    try:
-        recent_counts
-    except NameError:
-        recent_counts = []
-
-    current_count = len(people_positions)
-
-    recent_counts.append(current_count)
-
-    if len(recent_counts) > 10:
-        recent_counts.pop(0)
-
-    people_count = max(recent_counts)
+    people_count = len(people_positions)
 
     
     

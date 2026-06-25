@@ -1,22 +1,13 @@
 from fastapi import FastAPI, UploadFile, File
-from services.video_processor import process_video
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from services.video_processor import process_video
 import shutil
 import os
 
 app = FastAPI()
-app.mount(
-    "/processed",
-    StaticFiles(directory="processed"),
-    name="processed"
-)
 
-app.mount(
-    "/snapshots",
-    StaticFiles(directory="snapshots"),
-    name="snapshots"
-)
+# CORS FIRST — before everything else
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -26,9 +17,12 @@ app.add_middleware(
 )
 
 UPLOAD_FOLDER = "uploads"
-
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs("processed", exist_ok=True)
+os.makedirs("snapshots", exist_ok=True)
+
+app.mount("/processed", StaticFiles(directory="processed"), name="processed")
+app.mount("/snapshots", StaticFiles(directory="snapshots"), name="snapshots")
 
 @app.get("/")
 def home():
@@ -36,7 +30,6 @@ def home():
 
 @app.post("/upload-video")
 async def upload_video(file: UploadFile = File(...)):
-
     file_path = os.path.join(UPLOAD_FOLDER, file.filename)
 
     with open(file_path, "wb") as buffer:
@@ -45,10 +38,10 @@ async def upload_video(file: UploadFile = File(...)):
     result = process_video(file_path)
 
     return {
-    "filename": file.filename,
-    "status": result["status"],
-    "total_frames": result["total_frames"],
-    "analysis": result["analysis"],
-    "processed_video": result["processed_video"],
-    "snapshot": result.get("snapshot")
-}
+        "filename": file.filename,
+        "status": result["status"],
+        "total_frames": result["total_frames"],
+        "analysis": result["analysis"],
+        "processed_video": result["processed_video"],
+        "snapshot": result.get("snapshot")
+    }

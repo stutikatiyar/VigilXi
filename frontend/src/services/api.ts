@@ -5,7 +5,7 @@ export async function uploadVideo(file: File) {
   formData.append("file", file)
 
   const response = await fetch(
-    "http://127.0.0.1:8000/upload-video",
+    "https://legendary-palm-tree-xr597rpqpvfvj7v-8000.app.github.dev/upload-video",
     {
       method: "POST",
       body: formData,
