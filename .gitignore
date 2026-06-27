@@ -7,3 +7,4 @@ backend/snapshots/
 backend/*.pt
 node_modules/
 .next/
+.env
