@@ -427,6 +427,17 @@ This project helped explore:
 
 ---
 
+## 📚 Development Notes
+
+Additional development documentation is maintained separately.
+
+* **README.md** → Project overview, architecture, setup, and features
+* **ERRORS.md** → Collection of development issues, root causes, and permanent fixes
+* **DEBUGGING.md** → Step-by-step debugging workflow and troubleshooting checklist
+
+These documents are intended to make future maintenance easier and document lessons learned during development.
+
+
 # 👩‍💻 Author
 
 ### Kirti
