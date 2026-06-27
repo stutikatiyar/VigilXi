@@ -2,7 +2,9 @@ import os
 import cv2
 from services.detector import detect_objects
 from services.analyzer import analyze_detections
+from services.pose_analyzer import analyze_all_poses
 
+MAX_FRAMES = 300
 
 def process_video(video_path):
 
@@ -32,9 +34,8 @@ def process_video(video_path):
 
     frame_count = 0
     final_snapshot = None
-
-    # FIX 3 — accumulate evidence across all frames instead of overwriting
     all_analyses = []
+    all_pose_events = []
 
     while cap.isOpened():
 
@@ -45,6 +46,10 @@ def process_video(video_path):
 
         frame_count += 1
 
+        if frame_count > MAX_FRAMES:
+            print(f"⚠️ Frame limit reached ({MAX_FRAMES}), stopping early.")
+            break
+
         if frame_count % 5 != 0:
             continue
 
@@ -53,11 +58,21 @@ def process_video(video_path):
         detections = detect_objects(frame)
         analysis = analyze_detections(detections)
 
+        # POSE ANALYSIS
+        keypoints_list = [d["keypoints"] for d in detections if d.get("keypoints") is not None]
+        pose_result = analyze_all_poses(keypoints_list)
+
+        # MERGE POSE ALERT INTO ANALYSIS
+        if pose_result["alert"]:
+            analysis["alert"] = True
+            analysis["interactions"].extend(pose_result["pose_events"])
+
+        all_analyses.append(analysis)
+        all_pose_events.extend(pose_result["pose_events"])
+
         print("Detections:", detections)
         print("Analysis:", analysis)
-
-        # FIX 3 — collect every frame's analysis
-        all_analyses.append(analysis)
+        print("Pose:", pose_result)
 
         # SAVE INCIDENT SNAPSHOT
         if analysis["alert"]:
@@ -69,11 +84,12 @@ def process_video(video_path):
             if detection["class_id"] == 0:
                 x1, y1, x2, y2 = map(int, detection["bbox"])
                 confidence = detection["confidence"]
+                track_id = detection["track_id"]
 
                 cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
                 cv2.putText(
                     frame,
-                    f"Person | {confidence:.2f}",
+                    f"Person #{track_id} | {confidence:.2f}",
                     (x1, y1 - 10),
                     cv2.FONT_HERSHEY_SIMPLEX,
                     0.6,
@@ -103,9 +119,9 @@ def process_video(video_path):
     cap.release()
     out.release()
 
-    # FIX 3 — majority vote across all frames
+    # MAJORITY VOTE
     alert_frames = [a for a in all_analyses if a["alert"]]
-    alert_triggered = len(alert_frames) > len(all_analyses) * 0.15  # alert if 30%+ frames flagged
+    alert_triggered = len(alert_frames) > len(all_analyses) * 0.15
 
     if all_analyses:
         max_people = max(a["people_detected"] for a in all_analyses)
@@ -116,11 +132,15 @@ def process_video(video_path):
         max_people = 0
         all_interactions = []
 
+    # DEDUPLICATE INTERACTIONS
+    unique_interactions = list(dict.fromkeys(all_interactions))
+
     final_analysis = {
         "alert": alert_triggered,
         "message": "Suspicious activity detected." if alert_triggered else "Normal activity detected.",
         "people_detected": max_people,
-        "interactions": all_interactions[:5]  # top 5 interactions
+        "interactions": unique_interactions[:8],
+        "pose_events": list(dict.fromkeys(all_pose_events))[:5]
     }
 
     print("FINAL ANALYSIS:", final_analysis)
