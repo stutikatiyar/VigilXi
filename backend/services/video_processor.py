@@ -3,10 +3,14 @@ import cv2
 from services.detector import detect_objects
 from services.analyzer import analyze_detections
 from services.pose_analyzer import analyze_all_poses
+from services.metrics import PerformanceMetrics
 
 MAX_FRAMES = 300
 
+
 def process_video(video_path):
+
+    metrics = PerformanceMetrics()
 
     cap = cv2.VideoCapture(video_path)
 
@@ -39,7 +43,10 @@ def process_video(video_path):
 
     while cap.isOpened():
 
+        # FRAME EXTRACTION
+        metrics.start("frame_extraction")
         ret, frame = cap.read()
+        metrics.stop("frame_extraction")
 
         if not ret:
             break
@@ -55,12 +62,21 @@ def process_video(video_path):
 
         frame = cv2.resize(frame, (640, 360))
 
+        # YOLO DETECTION
+        metrics.start("yolo_detection")
         detections = detect_objects(frame)
+        metrics.stop("yolo_detection")
+
+        # THREAT ANALYSIS
+        metrics.start("threat_analysis")
         analysis = analyze_detections(detections)
+        metrics.stop("threat_analysis")
 
         # POSE ANALYSIS
+        metrics.start("pose_analysis")
         keypoints_list = [d["keypoints"] for d in detections if d.get("keypoints") is not None]
         pose_result = analyze_all_poses(keypoints_list)
+        metrics.stop("pose_analysis")
 
         # MERGE POSE ALERT INTO ANALYSIS
         if pose_result["alert"]:
@@ -79,7 +95,9 @@ def process_video(video_path):
             final_snapshot = f"snapshots/incident_frame_{frame_count}.jpg"
             cv2.imwrite(final_snapshot, frame)
 
-        # DRAW DETECTIONS
+        # VIDEO RENDERING
+        metrics.start("video_rendering")
+
         for detection in detections:
             if detection["class_id"] == 0:
                 x1, y1, x2, y2 = map(int, detection["bbox"])
@@ -115,9 +133,13 @@ def process_video(video_path):
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 3)
 
         out.write(frame)
+        metrics.stop("video_rendering")
 
     cap.release()
     out.release()
+
+    # FINALIZE METRICS
+    metrics.finish()
 
     # MAJORITY VOTE
     alert_frames = [a for a in all_analyses if a["alert"]]
@@ -132,7 +154,6 @@ def process_video(video_path):
         max_people = 0
         all_interactions = []
 
-    # DEDUPLICATE INTERACTIONS
     unique_interactions = list(dict.fromkeys(all_interactions))
 
     final_analysis = {
@@ -144,11 +165,13 @@ def process_video(video_path):
     }
 
     print("FINAL ANALYSIS:", final_analysis)
+    print("METRICS:", metrics.get_metrics())
 
     return {
         "status": "processed",
         "total_frames": frame_count,
         "analysis": final_analysis,
         "processed_video": output_path,
-        "snapshot": final_snapshot
+        "snapshot": final_snapshot,
+        "metrics": metrics.get_metrics()
     }
