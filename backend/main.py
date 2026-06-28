@@ -15,10 +15,13 @@ init_db()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=[
+        "https://legendary-palm-tree-xr597rpqpvfvj7v-3000.app.github.dev"
+    ],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 UPLOAD_FOLDER = "uploads"

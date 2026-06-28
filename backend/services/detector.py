@@ -1,16 +1,22 @@
 from ultralytics import YOLO
+import torch
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
 model = YOLO("yolov8l-pose.pt")
+model.to(device)
+
+print(f"YOLO running on: {device}")
 
 
 def detect_objects(frame):
 
     results = model.predict(
         frame,
-        imgsz=1280,
+        imgsz=640,
         classes=[0],
         conf=0.20,
-        iou=0.30
+        iou=0.30,
+        device=device
     )
 
     detections = []
@@ -30,10 +36,9 @@ def detect_objects(frame):
             class_id = int(box.cls[0])
             track_id = int(box.id[0]) if box.id is not None else -1
 
-            # EXTRACT KEYPOINTS FOR THIS PERSON
             kps = None
             if keypoints is not None and i < len(keypoints.data):
-                kps = keypoints.data[i].tolist()  # 17 keypoints [[x,y,conf], ...]
+                kps = keypoints.data[i].tolist()
 
             detections.append({
                 "track_id": track_id,
