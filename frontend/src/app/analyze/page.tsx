@@ -7,7 +7,8 @@ import ProcessingScreen from "@/components/ProcessingScreen"
 import { Video } from "lucide-react"
 import PerformanceDashboard from "@/components/home/PerformanceDashboard"
 
-const API_URL = "https://legendary-palm-tree-xr597rpqpvfvj7v-8000.app.github.dev"
+
+const API_URL = "https://proving-grudging-earflap.ngrok-free.dev"
 const getMetricUnit = (key: string) => {
   switch (key) {
     case "frame_extraction":

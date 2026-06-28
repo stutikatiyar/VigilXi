@@ -1,4 +1,4 @@
-const API_URL = "https://legendary-palm-tree-xr597rpqpvfvj7v-8000.app.github.dev";
+const API_URL = "https://proving-grudging-earflap.ngrok-free.dev"
 
 export async function uploadVideo(file: File) {
   const formData = new FormData();
@@ -6,6 +6,7 @@ export async function uploadVideo(file: File) {
 
   const response = await fetch(`${API_URL}/upload-video`, {
     method: "POST",
+    headers: { "ngrok-skip-browser-warning": "true" },
     body: formData,
   });
 
@@ -14,7 +15,9 @@ export async function uploadVideo(file: File) {
 }
 
 export async function pollResult(jobId: string) {
-  const response = await fetch(`${API_URL}/result/${jobId}`);
+  const response = await fetch(`${API_URL}/result/${jobId}`, {
+    headers: { "ngrok-skip-browser-warning": "true" },
+  });
   if (!response.ok) throw new Error(`Poll failed: ${response.status}`);
   return await response.json();
 }
