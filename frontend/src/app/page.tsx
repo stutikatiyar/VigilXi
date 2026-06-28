@@ -12,7 +12,7 @@ import CTA from "@/components/home/CTA"
 import Footer from "@/components/home/Footer"
 
 
-const API_URL = "https://legendary-palm-tree-xr597rpqpvfvj7v-8000.app.github.dev"
+const API_URL = "https://proving-grudging-earflap.ngrok-free.dev"
 
 interface SystemStatus {
   videos_processed: number
@@ -29,7 +29,9 @@ export default function Home() {
   useEffect(() => {
     async function fetchStatus() {
       try {
-        const res = await fetch(`${API_URL}/system-status`)
+        const res = await fetch(`${API_URL}/system-status`, {
+  headers: { "ngrok-skip-browser-warning": "true" },
+})
         const data = await res.json()
         setStatus(data)
         setBackendOnline(true)
