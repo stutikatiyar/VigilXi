@@ -5,8 +5,43 @@ import Link from "next/link"
 import { uploadVideo, pollResult } from "@/services/api"
 import ProcessingScreen from "@/components/ProcessingScreen"
 import { Video } from "lucide-react"
+import PerformanceDashboard from "@/components/home/PerformanceDashboard"
 
 const API_URL = "https://legendary-palm-tree-xr597rpqpvfvj7v-8000.app.github.dev"
+const getMetricUnit = (key: string) => {
+  switch (key) {
+    case "frame_extraction":
+    case "yolo_detection":
+    case "threat_analysis":
+    case "pose_analysis":
+    case "video_rendering":
+    case "total_processing":
+      return "s";
+
+    case "average_yolo_per_frame":
+      return "s/frame";
+
+    case "processing_fps":
+      return "FPS";
+
+    case "yolo_runtime_percent":
+      return "%";
+
+    case "frames_read":
+    case "frames_processed":
+    case "frames_skipped":
+      return "frames";
+
+    case "alerts_generated":
+      return "alerts";
+
+    case "snapshots_generated":
+      return "snapshots";
+
+    default:
+      return "";
+  }
+};
 
 export default function AnalyzePage() {
 
@@ -250,24 +285,9 @@ export default function AnalyzePage() {
                 )}
               </div>
             </div>
-
-            {/* BOTTOM ROW — Performance Metrics */}
+{/* PERFORMANCE METRICS */}
             {result.metrics && (
-              <div className="rounded-3xl border border-white/10 bg-black/40 p-6 backdrop-blur-xl">
-                <h3 className="text-xl font-bold text-cyan-300 mb-6 tracking-widest">
-                  ⚡ PERFORMANCE METRICS
-                </h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                  {Object.entries(result.metrics).map(([key, value]) => (
-                    <div key={key} className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center">
-                      <p className="text-gray-500 text-xs tracking-widest mb-2">
-                        {key.replace(/_/g, " ").toUpperCase()}
-                      </p>
-                      <p className="text-2xl font-black text-cyan-400">{value}s</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <PerformanceDashboard metrics={result.metrics} />
             )}
 
           </div>

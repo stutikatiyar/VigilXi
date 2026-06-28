@@ -52,6 +52,7 @@ def process_video(video_path):
             break
 
         frame_count += 1
+        metrics.frames_read += 1
 
         if frame_count > MAX_FRAMES:
             print(f"⚠️ Frame limit reached ({MAX_FRAMES}), stopping early.")
@@ -59,6 +60,7 @@ def process_video(video_path):
 
         if frame_count % 5 != 0:
             continue
+        metrics.frames_processed += 1
 
         frame = cv2.resize(frame, (640, 360))
 
@@ -92,8 +94,10 @@ def process_video(video_path):
 
         # SAVE INCIDENT SNAPSHOT
         if analysis["alert"]:
+            metrics.alerts_generated += 1
             final_snapshot = f"snapshots/incident_frame_{frame_count}.jpg"
             cv2.imwrite(final_snapshot, frame)
+            metrics.snapshots_generated += 1
 
         # VIDEO RENDERING
         metrics.start("video_rendering")
@@ -169,7 +173,8 @@ def process_video(video_path):
 
     return {
         "status": "processed",
-        "total_frames": frame_count,
+        "total_frames": metrics.frames_read,
+        "processed_frames": metrics.frames_processed,
         "analysis": final_analysis,
         "processed_video": output_path,
         "snapshot": final_snapshot,
